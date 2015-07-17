@@ -35,4 +35,4 @@ See releases for a compiled version.
 NOTE: The version of dokan I used works on on older Windows systems (pre Win7), but may not work on newer ones.  
 I first tried using dokany, but it blocks installation on older Windows systems.  
 
-However, it shouldn't be too hard to get it to work using the newer DLLs as well.  In fact, you can try installing the version that works for you, update dokan.dll, and see it it works.
+However, it shouldn't be too hard to get it to work using the newer DLLs as well.  In fact, you can try installing the version that works for you, update dokan.dll, and see if it works.
