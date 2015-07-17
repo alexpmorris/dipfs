@@ -34,4 +34,4 @@ See releases for a compiled version.
 
 NOTE: I first tried using dokany, but it blocks installation on older Windows systems.  
 
-HOWEVER, **I confirmed** that DokanInstall_0.6.0.exe (and dipfs) also works on 64-bit Windows 7, as well as on older Windows 32-bit systems.
+HOWEVER, **I confirmed** that DokanInstall_0.6.0.exe (and dipfs) also work on 64-bit Windows 7, as well as on older Windows 32-bit systems.
