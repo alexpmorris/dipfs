@@ -4,8 +4,17 @@ program dipfs;
  *
  * dipfs - basic read-only interface between ipfs and dokan, by Alexander Paul Morris
  *         works by connecting to the local ipfs REST endpoint at http://127.0.0.1:5001/api/
- *         to mount the ipfs distributed file system to a Windows drive (like Fuse for Linux)  
- * v0.1, 2015-07-16
+ *         to mount the ipfs distributed file system to a Windows drive (like Fuse for Linux)
+ *
+ *         Confirmed to work with Windows 32-bit and 64-bit installs.
+ *
+ *
+ * v0.11, 2015-07-17, Cleaned up a few things, and fixed error if no drive id was provided
+ *                    Confirmed that DokanInstall_0.6.0.exe and dipfs also work on a
+ *                    64-bit Windows7 system, as well as on older Windows 32-bit setups
+ *
+ * v0.10, 2015-07-16  Initial release
+ *
  *
  * usage:
  *   dipfs /l z       <-- will link ipfs to drive z:
@@ -59,6 +68,8 @@ uses
   SuperObject, HashMap, FastStrings,
   HTTPSend, //ssl_openssl, ssl_openssl_lib, ZLibExGz,
   Dokan in 'Dokan.pas';
+
+const dipfsVersion = '0.11';
 
 // Not available in Windows.pas
 function SetFilePointerEx(hFile: THandle; lDistanceToMove: LARGE_INTEGER; lpNewFilePointer: Pointer; dwMoveMethod: DWORD): BOOL; stdcall; external kernel32;
@@ -579,8 +590,6 @@ end;
 
 // Global vars
 var
-  g_RootDirectory: string = '';
-
   g_DokanOperations: TDokanOperations = (
     CreateFile: MirrorCreateFile;
     OpenDirectory: MirrorOpenDirectory;
@@ -673,7 +682,7 @@ begin
   i := 1;
   g_DokanOptions.Version := DOKAN_VERSION;
   g_DokanOptions.ThreadCount := 0;
-  g_RootDirectory := 'c:\';
+
   while i <= ParamCount do
   begin
     case FindSwitch(ParamStr(i), ['R','L','T','D','S','N','M','K','A']) of
@@ -681,10 +690,9 @@ begin
         if (i = ParamCount) or (ParamStr(i+1) = '') then
           raise Exception.Create('Missing root directory after /R');
         Inc(i);
-        g_RootDirectory := ParamStr(i);
       end;
       1: begin
-        if (i = ParamCount) then //or (Length(ParamStr(i+1)) <> 1) then
+        if (i = ParamCount) or (Length(ParamStr(i+1)) <> 1) then
           raise Exception.Create('Missing drive letter after /L');
         Inc(i);
         g_DokanOptions.MountPoint := PWideChar(WideString(ParamStr(i)));
@@ -704,13 +712,14 @@ begin
     end;
     Inc(i);
   end;
-  if (g_RootDirectory = '') or (g_DokanOptions.MountPoint = nil) then
+  if (g_DokanOptions.MountPoint = WideString('')) then
   begin
+    WriteLn('dipfs v',dipfsVersion,' - mount ipfs to a Windows drive via Dokan');
     WriteLn('Usage: ',ExtractFileName(ParamStr(0)));
-    //WriteLn('   /R RootDirectory    (e.g. /R C:\test)');
     WriteLn('   /L DriveLetter      (e.g. /L m)');
-    //WriteLn('   /T ThreadCount      (optional, e.g. /T 5)');
     WriteLn('   /D                  (optional, enable debug output)');
+    //WriteLn('   /R RootDirectory    (e.g. /R C:\test)');
+    //WriteLn('   /T ThreadCount      (optional, e.g. /T 5)');
     //WriteLn('   /S                  (optional, use stderr for output)');
     //WriteLn('   /N                  (optional, use network drive)');
     //WriteLn('   /M                  (optional, use removable drive)');
@@ -718,7 +727,7 @@ begin
     //WriteLn('   /A                  (optional, use alternate stream)');
   end else
   begin
-    Writeln('Mounting ipfs at '+g_DokanOptions.MountPoint+':\ipfs\ via http://127.0.0.1:5001/api');
+    Writeln('dipfs v',dipfsVersion,': Mounting ipfs to '+g_DokanOptions.MountPoint+':\ipfs\ via http://127.0.0.1:5001/api');
     i := DokanMain(g_DokanOptions, g_DokanOperations);
     if i <> DOKAN_SUCCESS then
       raise EDokanMainError.Create(i);
@@ -738,3 +747,4 @@ begin
   end;
   HTFileMap.Free;
 end.
+
