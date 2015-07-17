@@ -2,7 +2,9 @@
 mount the ipfs distributed file system to a Windows drive via dokan
 
 basic read-only interface between ipfs and dokan, works by connecting to the local ipfs REST endpoint at http://127.0.0.1:5001/api/ 
-to mount the ipfs distributed file system to a Windows drive via dokan (like Fuse for Linux)  
+to mount the ipfs distributed file system to a Windows drive via dokan (like Fuse for Linux).
+
+The code is in Delphi 7, and should be relatively easily adaptable to FreePascal or later version of Delphi.
 
 usage (*make sure ipfs is already running via "ipfs daemon"*):
 
