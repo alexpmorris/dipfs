@@ -34,4 +34,4 @@ See releases for a compiled version.
 
 **I confirmed** that DokanInstall_0.6.0.exe (and dipfs) also work on 64-bit Windows 7, as well as on older Windows 32-bit systems.
 
-**NOTE:** I first tried using dokany, but it blocks installation on older Windows systems.  I tried using dipfs with dokany on 64-bit Windows 7, and it worked too.  **HOWEVER**, dokany seems to BSOD every time I tried to dismount the drive (it also happened with their version of mirror.exe, so it's not a dipfs issue).  I've opened an issue with dokany to see if the problem can be tracked down.
+**NOTE:** I first tried using [dokany](https://github.com/dokan-dev/dokany), but it blocks installation on older Windows systems.  I tried using dipfs with dokany on 64-bit Windows 7, and it worked too.  **HOWEVER**, dokany seems to BSOD every time I tried to dismount the drive (it also happened with their version of mirror.exe, so it's not a dipfs issue).  I've opened an issue with [dokany](https://github.com/dokan-dev/dokany/issues/31) to see if the problem can be tracked down.
