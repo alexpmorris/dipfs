@@ -32,6 +32,6 @@ Additional Source Code Dependencies: HTTPSend (Synapse)
 
 See releases for a compiled version.  
 
-NOTE: I first tried using dokany, but it blocks installation on older Windows systems.  
+**I confirmed** that DokanInstall_0.6.0.exe (and dipfs) also work on 64-bit Windows 7, as well as on older Windows 32-bit systems.
 
-HOWEVER, **I confirmed** that DokanInstall_0.6.0.exe (and dipfs) also work on 64-bit Windows 7, as well as on older Windows 32-bit systems.
+NOTE: I first tried using dokany, but it blocks installation on older Windows systems.  I tried dokany on 64-bit  Windows 7, and it seemed to work well there too, **except** that dokany seems to BSOD when I tried to dismount the drive (it also happened with their version of mirror.exe, so it's not a dipfs issue).  I've opened an issue with dokany.
