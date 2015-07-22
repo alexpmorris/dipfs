@@ -7,7 +7,10 @@ program dipfs;
  *         to mount the ipfs distributed file system to a Windows drive (like Fuse for Linux)
  *
  *         Confirmed to work with Windows 32-bit and 64-bit installs.
+ *         For Windows 7 to Windows 10, use latest dokany release at https://github.com/dokan-dev/dokany
  *
+ *
+ * v0.12, 2015-07-22, Added access to \ipns\ paths as well (an ipns path is a mutable pointer to an ipfs path)
  *
  * v0.11, 2015-07-17, Cleaned up a few things, and fixed error if no drive id was provided
  *                    Confirmed that DokanInstall_0.6.0.exe and dipfs also work on a
@@ -17,7 +20,7 @@ program dipfs;
  *
  *
  * usage:
- *   dipfs /l z       <-- will link ipfs to drive z:
+ *   dipfs /l z       <-- will link \ipfs\ and \ipns\ to drive z:
  *   dipfs /l z /d    <-- same as above, with additional output for debugging
  *
  * from Windows Command Prompt, try the following:
@@ -69,7 +72,7 @@ uses
   HTTPSend, //ssl_openssl, ssl_openssl_lib, ZLibExGz,
   Dokan in 'Dokan.pas';
 
-const dipfsVersion = '0.11';
+const dipfsVersion = '0.12';
 
 // Not available in Windows.pas
 function SetFilePointerEx(hFile: THandle; lDistanceToMove: LARGE_INTEGER; lpNewFilePointer: Pointer; dwMoveMethod: DWORD): BOOL; stdcall; external kernel32;
@@ -313,12 +316,13 @@ begin
     exit;
    end;
 
+  FillChar(Buffer,NumberOfBytesToRead,0);  //clear dokan data buffer
+
   if HTFileMap.Find(FilePath,Data) then begin
     TmpStream := TMemoryStream(Data);
     TmpStream.Seek(Offset,soFromBeginning);
     if (TmpStream.Size-TmpStream.Position < NumberOfBytesToRead) then
       NumberOfBytesToRead := TmpStream.Size-TmpStream.Position;
-    FillChar(Buffer,NumberOfBytesToRead,0);
     TmpStream.ReadBuffer(Buffer,NumberOfBytesToRead);
     NumberOfBytesRead := NumberOfBytesToRead;
    end else begin
@@ -327,7 +331,6 @@ begin
        result := -1;
        exit;
       end;
-     FillChar(Buffer,NumberOfBytesToRead,0);
      TmpStream.Seek(0,soFromBeginning);
      if (TmpStream.Size-TmpStream.Position < NumberOfBytesToRead) then
        NumberOfBytesToRead := TmpStream.Size-TmpStream.Position;
@@ -384,7 +387,7 @@ begin
   DbgPrint('GetFileInformation: %s', [FilePath]);
 
   fSize := 0;
-  if (Copy(FilePath,1,6) = '\ipfs\') then begin
+  if (Copy(FilePath,1,6) = '\ipfs\') or (Copy(FilePath,1,6) = '\ipns\') then begin
     if (Copy(FilePath,Length(FilePath)-1,2)='\*') then Delete(FilePath,length(FilePath)-1,2);
     FilePath := LongHandStrNxt(FilePath,'\','/');
     TmpL := TStringList.Create;
@@ -488,6 +491,8 @@ begin
   if (FilePath = '') or (FilePath = '/') then begin
     MakeDirectoryEntry(FindData,'ipfs',1{directory},0);
     FillFindDataCallback(FindData, DokanFileInfo);
+    MakeDirectoryEntry(FindData,'ipns',1{directory},0);
+    FillFindDataCallback(FindData, DokanFileInfo);
     result := 0;
     exit;
    end;
@@ -496,7 +501,7 @@ begin
   FillFindDataCallback(FindData, DokanFileInfo);
   MakeDirectoryEntry(FindData,'..',1{directory},0);
   FillFindDataCallback(FindData, DokanFileInfo);
-  if (FilePath = '/ipfs') then begin
+  if (FilePath = '/ipfs') or (FilePath = '/ipns') then begin
     result := 0;
     exit;
    end;
@@ -727,7 +732,7 @@ begin
     //WriteLn('   /A                  (optional, use alternate stream)');
   end else
   begin
-    Writeln('dipfs v',dipfsVersion,': Mounting ipfs to '+g_DokanOptions.MountPoint+':\ipfs\ via http://127.0.0.1:5001/api');
+    Writeln('dipfs v',dipfsVersion,': Mounting ipfs ['+g_DokanOptions.MountPoint+':\ipfs\, '+g_DokanOptions.MountPoint+':\ipns\] via http://127.0.0.1:5001/api');
     i := DokanMain(g_DokanOptions, g_DokanOperations);
     if i <> DOKAN_SUCCESS then
       raise EDokanMainError.Create(i);
