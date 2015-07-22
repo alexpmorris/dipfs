@@ -9,7 +9,7 @@ The code is in Delphi 7, and should be relatively easily adaptable to FreePascal
 usage (*make sure ipfs is already running via "ipfs daemon"*):
 
 ```
-dipfs /l z       <-- will link ipfs to drive z:
+dipfs /l z       <-- will link \ipfs\ and \ipns\ to drive z:
 dipfs /l z /d    <-- same as above, with additional output for debugging
 ```
 
