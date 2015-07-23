@@ -282,10 +282,8 @@ begin
   if HTFileMap.Find(FilePath,Data) then begin
     DbgPrint('CloseFile: %s', [FilePath]);
     TmpStream := TMemoryStream(Data);
-    if (TmpStream.Position >= TmpStream.Size-1) then begin
-      TmpStream.Free;
-      HTFileMap.Delete(FilePath);
-     end;
+    TmpStream.Free;
+    HTFileMap.Delete(FilePath);
    end;
 end;
 
