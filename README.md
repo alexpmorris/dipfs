@@ -1,5 +1,5 @@
 # dipfs
-mount the ipfs distributed file system to a Windows drive via dokan
+mount the [ipfs distributed file system](https://github.com/ipfs/go-ipfs) to a Windows drive via dokan
 
 basic read-only interface between ipfs and dokan, works by connecting to the local ipfs REST endpoint at http://127.0.0.1:5001/api/ 
 to mount the ipfs distributed file system to a Windows drive via dokan (like Fuse for Linux).
