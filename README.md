@@ -34,6 +34,6 @@ See releases for a compiled version.
 
 Required Driver/DLL Install File:
 
-* For new versions of Windows (Windows 10, Windows 8.1, Windows Server 2012 R2, Windows 8, Windows Server 2012, Windows 7) use latest dokany release: https://github.com/dokan-dev/dokany/releases
+* For new versions of Windows (Windows 10, Windows 8.1, Windows Server 2012 R2, Windows 8, Windows Server 2012, Windows 7) use dokany release v0.7.4 (later versions have breaking changes): https://github.com/dokan-dev/dokany/releases/tag/v0.7.4
 
 * for 32-bit/64-bit Windows 7 or below, you can use the version of dokan under releases: **DokanInstall_0.6.0.exe**
